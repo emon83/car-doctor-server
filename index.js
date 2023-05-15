@@ -28,6 +28,8 @@ const client = new MongoClient(uri, {
   },
 });
 
+
+
 const verifyJWT = (req, res, next) => {
   //console.log(req.headers.authorization);
   const authorization = req.headers.authorization;
@@ -42,12 +44,13 @@ const verifyJWT = (req, res, next) => {
     if (error) {
       return res
         .status(403)
-        .send({ error: true, message: "unauthorized access" });
+        .send({ error: true, message: "forbidden access" });
     }
     req.decoded = decoded;
     next();
   });
 };
+
 
 async function run() {
   try {
@@ -56,6 +59,7 @@ async function run() {
 
     const serviceCollection = client.db("carDoctor").collection("services");
     const bookingCollection = client.db("carDoctor").collection("bookings");
+
 
     //JWT TOKEN
     app.post("/jwt", (req, res) => {
@@ -67,6 +71,8 @@ async function run() {
       //console.log(token);
       res.send({ token });
     });
+
+
 
     //SERVICES ROUTES
     app.get("/services", async (req, res) => {
@@ -95,6 +101,8 @@ async function run() {
       res.send(result);
     });
 
+
+    
     //BOOKINGS ROUTES
     app.get("/bookings", verifyJWT, async (req, res) => {
       //console.log(req.headers.authorization);
